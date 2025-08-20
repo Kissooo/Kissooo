@@ -11,7 +11,7 @@
     <div class="container mx-auto p-8">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-700">ทะเบียนครุภัณฑ์</h1>
-            <button onclick="openModal('addModal')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            <button onclick="openAddModal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                 &#43; เพิ่มครุภัณฑ์ใหม่
             </button>
         </div>
@@ -112,44 +112,6 @@
         </div>
     </div>
 
-    <script>
-        const modal = document.getElementById('addModal');
-        const form = document.getElementById('itemForm');
-        const modalTitle = document.getElementById('modalTitle');
-
-        function openModal() {
-            // Reset form for adding
-            form.reset();
-            form.action = '/add';
-            modalTitle.innerText = 'เพิ่มครุภัณฑ์ใหม่';
-            modal.classList.remove('hidden');
-        }
-
-        function openEditModal(id, name, code, purchaseDate, price, status) {
-            form.reset();
-            // Populate form for editing
-            form.action = `/update/${id}`;
-            modalTitle.innerText = 'แก้ไขข้อมูลครุภัณฑ์';
-
-            document.getElementById('name').value = name;
-            document.getElementById('code').value = code;
-            document.getElementById('purchase_date').value = purchaseDate;
-            document.getElementById('price').value = price;
-            document.getElementById('status').value = status;
-
-            modal.classList.remove('hidden');
-        }
-
-        function closeModal() {
-            modal.classList.add('hidden');
-        }
-
-        // Close modal if clicking outside of it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
