@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบริหารงานพัสดุ-ครุภัณฑ์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-700">ทะเบียนครุภัณฑ์</h1>
+            <button onclick="openModal('addModal')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                &#43; เพิ่มครุภัณฑ์ใหม่
+            </button>
+        </div>
+
+        <!-- Items Table -->
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full leading-normal">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="px-5 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ชื่อ</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">รหัส</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">วันที่จัดซื้อ</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ราคา (บาท)</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">สถานะ</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-300 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-5 py-4 border-b border-gray-200 bg-white text-sm">{{ item['name'] }}</td>
+                        <td class="px-5 py-4 border-b border-gray-200 bg-white text-sm">{{ item['code'] }}</td>
+                        <td class="px-5 py-4 border-b border-gray-200 bg-white text-sm">{{ item['purchase_date'] }}</td>
+                        <td class="px-5 py-4 border-b border-gray-200 bg-white text-sm text-right">{{ "%.2f"|format(item['price']) }}</td>
+                        <td class="px-5 py-4 border-b border-gray-200 bg-white text-sm">{{ item['status'] }}</td>
+                        <td class="px-5 py-4 border-b border-gray-200 bg-white text-sm text-center">
+                            <div class="flex item-center justify-center space-x-2">
+                                <button onclick="openEditModal({{ item['id'] }}, '{{ item['name'] }}', '{{ item['code'] }}', '{{ item['purchase_date'] }}', {{ item['price'] }}, '{{ item['status'] }}')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs">
+                                    แก้ไข
+                                </button>
+                                <form action="{{ url_for('delete_item', item_id=item['id']) }}" method="POST" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?');">
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs">
+                                        ลบ
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-10 text-gray-500">ไม่พบข้อมูลครุภัณฑ์</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="addModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <form id="itemForm" action="{{ url_for('add_item') }}" method="POST">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">เพิ่มครุภัณฑ์ใหม่</h3>
+                        <div class="mt-4 space-y-4">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700">ชื่อครุภัณฑ์</label>
+                                <input type="text" name="name" id="name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                            </div>
+                            <div>
+                                <label for="code" class="block text-sm font-medium text-gray-700">รหัสครุภัณฑ์</label>
+                                <input type="text" name="code" id="code" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                            </div>
+                            <div>
+                                <label for="purchase_date" class="block text-sm font-medium text-gray-700">วันที่จัดซื้อ</label>
+                                <input type="date" name="purchase_date" id="purchase_date" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                            </div>
+                            <div>
+                                <label for="price" class="block text-sm font-medium text-gray-700">ราคา</label>
+                                <input type="number" step="0.01" name="price" id="price" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                            </div>
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">สถานะ</label>
+                                <select name="status" id="status" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                                    <option>ใช้งานอยู่</option>
+                                    <option>ว่าง</option>
+                                    <option>รอการจำหน่าย</option>
+                                    <option>ซ่อมแซม</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                            บันทึก
+                        </button>
+                        <button type="button" onclick="closeModal('addModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            ยกเลิก
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('addModal');
+        const form = document.getElementById('itemForm');
+        const modalTitle = document.getElementById('modalTitle');
+
+        function openModal() {
+            // Reset form for adding
+            form.reset();
+            form.action = '/add';
+            modalTitle.innerText = 'เพิ่มครุภัณฑ์ใหม่';
+            modal.classList.remove('hidden');
+        }
+
+        function openEditModal(id, name, code, purchaseDate, price, status) {
+            form.reset();
+            // Populate form for editing
+            form.action = `/update/${id}`;
+            modalTitle.innerText = 'แก้ไขข้อมูลครุภัณฑ์';
+
+            document.getElementById('name').value = name;
+            document.getElementById('code').value = code;
+            document.getElementById('purchase_date').value = purchaseDate;
+            document.getElementById('price').value = price;
+            document.getElementById('status').value = status;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        // Close modal if clicking outside of it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
