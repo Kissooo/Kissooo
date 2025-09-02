@@ -1,9 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Item
-from .forms import ItemForm
+from .forms import ItemForm, SignUpForm
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
 
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = SignUpForm()
+    return render(request, 'registration/signup.html', {'form': form})
+
+@login_required
 def item_list(request):
     query = request.GET.get('q')
     items_list = Item.objects.all().order_by('name')
@@ -19,6 +32,7 @@ def item_list(request):
 
     return render(request, 'item_list.html', {'page_obj': page_obj, 'query': query})
 
+@login_required
 def item_create(request):
     if request.method == 'POST':
         form = ItemForm(request.POST)
@@ -29,6 +43,7 @@ def item_create(request):
         form = ItemForm()
     return render(request, 'item_form.html', {'form': form})
 
+@login_required
 def item_update(request, pk):
     item = get_object_or_404(Item, pk=pk)
     if request.method == 'POST':
@@ -40,6 +55,7 @@ def item_update(request, pk):
         form = ItemForm(instance=item)
     return render(request, 'item_form.html', {'form': form})
 
+@login_required
 def item_delete(request, pk):
     item = get_object_or_404(Item, pk=pk)
     if request.method == 'POST':
