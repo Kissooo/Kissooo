@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mt-4">Item Details</h1>
+<div class="card">
+  <div class="card-header">
+    {{ item.name }}
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Code: {{ item.code }}</h5>
+    <p class="card-text"><strong>Quantity:</strong> {{ item.quantity }}</p>
+    <p class="card-text"><strong>Description:</strong> {{ item.description|default:"No description provided." }}</p>
+    <p class="card-text"><small class="text-muted">Date Received: {{ item.date_received }}</small></p>
+    <a href="{% url 'item_list' %}" class="btn btn-secondary">Back to List</a>
+    <a href="{% url 'item_update' item.pk %}" class="btn btn-warning">Edit</a>
+  </div>
+</div>
+{% endblock %}

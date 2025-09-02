@@ -32,7 +32,7 @@
             {% for item in page_obj %}
                 <tr>
                     <td>{{ item.code }}</td>
-                    <td>{{ item.name }}</td>
+                    <td><a href="{% url 'item_detail' item.pk %}">{{ item.name }}</a></td>
                     <td>{{ item.quantity }}</td>
                     <td>
                         <a href="{% url 'item_update' item.pk %}" class="btn btn-sm btn-warning">Edit</a>

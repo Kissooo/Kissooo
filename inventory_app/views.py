@@ -62,3 +62,8 @@ def item_delete(request, pk):
         item.delete()
         return redirect('item_list')
     return render(request, 'item_confirm_delete.html', {'item': item})
+
+@login_required
+def item_detail(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    return render(request, 'item_detail.html', {'item': item})
