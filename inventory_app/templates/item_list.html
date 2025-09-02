@@ -2,7 +2,23 @@
 
 {% block content %}
     <h1 class="mt-4">Inventory Items</h1>
-    <a href="{% url 'item_create' %}" class="btn btn-primary mb-3">Add New Item</a>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form method="get" action="{% url 'item_list' %}" class="form-inline">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search by code or name..." value="{{ query|default:'' }}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <a href="{% url 'item_create' %}" class="btn btn-primary">Add New Item</a>
+        </div>
+    </div>
+
     <table class="table table-bordered">
         <thead>
             <tr>
