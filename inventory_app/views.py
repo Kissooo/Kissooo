@@ -1,10 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Item
-from .forms import ItemForm, SignUpForm
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.urls import reverse_lazy
-from django.contrib.auth.decorators import login_required
+from .models import Item
+from .forms import ItemForm, SignUpForm
 
 def signup(request):
     if request.method == 'POST':
@@ -44,6 +43,11 @@ def item_create(request):
     return render(request, 'item_form.html', {'form': form})
 
 @login_required
+def item_detail(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    return render(request, 'item_detail.html', {'item': item})
+
+@login_required
 def item_update(request, pk):
     item = get_object_or_404(Item, pk=pk)
     if request.method == 'POST':
@@ -62,8 +66,3 @@ def item_delete(request, pk):
         item.delete()
         return redirect('item_list')
     return render(request, 'item_confirm_delete.html', {'item': item})
-
-@login_required
-def item_detail(request, pk):
-    item = get_object_or_404(Item, pk=pk)
-    return render(request, 'item_detail.html', {'item': item})
