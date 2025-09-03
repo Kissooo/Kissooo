@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.paginator import Paginator
-from .models import Item
+from .models import Item, Category
 from .forms import ItemForm, SignUpForm
 
 def signup(request):
@@ -17,8 +17,14 @@ def signup(request):
 
 @login_required
 def item_list(request):
+    categories = Category.objects.all()
+    selected_category_id = request.GET.get('category')
     query = request.GET.get('q')
+
     items_list = Item.objects.all().order_by('name')
+
+    if selected_category_id:
+        items_list = items_list.filter(category__id=selected_category_id)
 
     if query:
         items_list = items_list.filter(
@@ -29,7 +35,13 @@ def item_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'item_list.html', {'page_obj': page_obj, 'query': query})
+    context = {
+        'page_obj': page_obj,
+        'query': query,
+        'categories': categories,
+        'selected_category_id': selected_category_id
+    }
+    return render(request, 'item_list.html', context)
 
 @login_required
 def item_create(request):

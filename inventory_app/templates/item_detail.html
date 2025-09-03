@@ -8,6 +8,7 @@
   </div>
   <div class="card-body">
     <h5 class="card-title">Code: {{ item.code }}</h5>
+    <p class="card-text"><strong>Category:</strong> {{ item.category.name|default:"N/A" }}</p>
     <p class="card-text"><strong>Quantity:</strong> {{ item.quantity }}</p>
     <p class="card-text"><strong>Description:</strong> {{ item.description|default:"No description provided." }}</p>
     <p class="card-text"><small class="text-muted">Date Received: {{ item.date_received }}</small></p>

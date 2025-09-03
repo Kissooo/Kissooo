@@ -6,7 +6,7 @@ from .models import Item
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ['code', 'name', 'quantity', 'description']
+        fields = ['code', 'name', 'category', 'quantity', 'description']
 
 class SignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
