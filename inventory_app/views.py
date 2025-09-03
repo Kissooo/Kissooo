@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.paginator import Paginator
-from .models import Item, Category, BorrowRecord
-from .forms import ItemForm, SignUpForm
+from .models import Item, Category, BorrowRecord, MaintenanceRecord
+from .forms import ItemForm, SignUpForm, MaintenanceRecordForm
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -103,3 +103,37 @@ def return_item(request, pk):
 def my_borrows(request):
     borrow_records = BorrowRecord.objects.filter(borrower=request.user).order_by('-borrow_date')
     return render(request, 'my_borrows.html', {'borrow_records': borrow_records})
+
+@login_required
+def maintenance_list(request):
+    records = MaintenanceRecord.objects.all().order_by('-scheduled_date')
+    return render(request, 'maintenance_list.html', {'records': records})
+
+@login_required
+def schedule_maintenance(request, item_pk):
+    item = get_object_or_404(Item, pk=item_pk)
+    if request.method == 'POST':
+        form = MaintenanceRecordForm(request.POST)
+        if form.is_valid():
+            maintenance = form.save(commit=False)
+            maintenance.item = item
+            maintenance.save()
+            return redirect('maintenance_list')
+    else:
+        form = MaintenanceRecordForm()
+    return render(request, 'schedule_maintenance.html', {'form': form, 'item': item})
+
+@login_required
+def update_maintenance(request, pk):
+    record = get_object_or_404(MaintenanceRecord, pk=pk)
+    if request.method == 'POST':
+        # For simplicity, using the same form. A different form could be used for updates.
+        form = MaintenanceRecordForm(request.POST, instance=record)
+        if form.is_valid():
+            if 'completion_date' in form.cleaned_data and form.cleaned_data['completion_date']:
+                record.status = 'COMPLETED'
+            form.save()
+            return redirect('maintenance_list')
+    else:
+        form = MaintenanceRecordForm(instance=record)
+    return render(request, 'update_maintenance.html', {'form': form, 'record': record})

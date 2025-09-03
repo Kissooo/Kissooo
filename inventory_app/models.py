@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import timedelta
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -21,6 +23,15 @@ class Item(models.Model):
     def __str__(self):
         return self.name
 
+    def is_maintenance_due(self):
+        """Checks if maintenance is due in the next 7 days or is overdue."""
+        today = timezone.now().date()
+        due_date_threshold = today + timedelta(days=7)
+        return self.maintenance_records.filter(
+            status='SCHEDULED',
+            scheduled_date__lte=due_date_threshold
+        ).exists()
+
 class BorrowRecord(models.Model):
     STATUS_CHOICES = [
         ('BORROWED', 'Borrowed'),
@@ -34,3 +45,18 @@ class BorrowRecord(models.Model):
 
     def __str__(self):
         return f'{self.item.name} borrowed by {self.borrower.username}'
+
+class MaintenanceRecord(models.Model):
+    STATUS_CHOICES = [
+        ('SCHEDULED', 'Scheduled'),
+        ('IN_PROGRESS', 'In Progress'),
+        ('COMPLETED', 'Completed'),
+    ]
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='maintenance_records')
+    scheduled_date = models.DateField()
+    completion_date = models.DateField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='SCHEDULED')
+
+    def __str__(self):
+        return f'Maintenance for {self.item.name} on {self.scheduled_date}'

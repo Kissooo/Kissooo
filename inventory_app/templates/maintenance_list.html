@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mt-4">Maintenance Schedule</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Scheduled Date</th>
+                <th>Completion Date</th>
+                <th>Status</th>
+                <th>Notes</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td><a href="{% url 'item_detail' record.item.pk %}">{{ record.item.name }}</a></td>
+                    <td>{{ record.scheduled_date }}</td>
+                    <td>{{ record.completion_date|default:"-" }}</td>
+                    <td>{{ record.get_status_display }}</td>
+                    <td>{{ record.notes|truncatewords:10 }}</td>
+                    <td>
+                        <a href="{% url 'update_maintenance' record.pk %}" class="btn btn-sm btn-warning">Update</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No maintenance records found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

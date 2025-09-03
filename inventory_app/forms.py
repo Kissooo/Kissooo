@@ -1,7 +1,15 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Item
+from .models import Item, MaintenanceRecord
+
+class MaintenanceRecordForm(forms.ModelForm):
+    class Meta:
+        model = MaintenanceRecord
+        fields = ['scheduled_date', 'notes', 'status']
+        widgets = {
+            'scheduled_date': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 class ItemForm(forms.ModelForm):
     class Meta:

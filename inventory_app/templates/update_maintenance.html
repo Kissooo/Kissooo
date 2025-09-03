@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mt-4">Update Maintenance for {{ record.item.name }}</h1>
+    <p>Scheduled for: {{ record.scheduled_date }}</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Update Record</button>
+        <a href="{% url 'maintenance_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

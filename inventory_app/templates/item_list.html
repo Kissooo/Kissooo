@@ -43,7 +43,12 @@
             {% for item in page_obj %}
                 <tr>
                     <td>{{ item.code }}</td>
-                    <td><a href="{% url 'item_detail' item.pk %}">{{ item.name }}</a></td>
+                    <td>
+                        <a href="{% url 'item_detail' item.pk %}">{{ item.name }}</a>
+                        {% if item.is_maintenance_due %}
+                            <span class="badge bg-danger">Maintenance Due</span>
+                        {% endif %}
+                    </td>
                     <td>{{ item.category.name|default:"N/A" }}</td>
                     <td>{{ item.quantity }}</td>
                     <td>

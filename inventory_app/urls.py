@@ -10,4 +10,8 @@ urlpatterns = [
     path('borrow/<int:pk>/', views.borrow_item, name='borrow_item'),
     path('return/<int:pk>/', views.return_item, name='return_item'),
     path('my_borrows/', views.my_borrows, name='my_borrows'),
+    # Maintenance URLs
+    path('maintenance/', views.maintenance_list, name='maintenance_list'),
+    path('item/<int:item_pk>/schedule_maintenance/', views.schedule_maintenance, name='schedule_maintenance'),
+    path('maintenance/<int:pk>/update/', views.update_maintenance, name='update_maintenance'),
 ]
