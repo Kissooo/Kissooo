@@ -14,6 +14,9 @@
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
+                            <a class="nav-link" href="{% url 'my_borrows' %}">My Borrows</a>
+                        </li>
+                        <li class="nav-item">
                             <span class="nav-link">Hello, {{ user.username }}!</span>
                         </li>
                         <li class="nav-item">

@@ -2,8 +2,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.paginator import Paginator
-from .models import Item, Category
+from .models import Item, Category, BorrowRecord
 from .forms import ItemForm, SignUpForm
+from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 def signup(request):
     if request.method == 'POST':
@@ -78,3 +80,26 @@ def item_delete(request, pk):
         item.delete()
         return redirect('item_list')
     return render(request, 'item_confirm_delete.html', {'item': item})
+
+@login_required
+@require_POST
+def borrow_item(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    # Optional: Add logic to check if item quantity > 0
+    BorrowRecord.objects.create(item=item, borrower=request.user)
+    return redirect('my_borrows')
+
+@login_required
+@require_POST
+def return_item(request, pk):
+    borrow_record = get_object_or_404(BorrowRecord, pk=pk, borrower=request.user)
+    if borrow_record.status == 'BORROWED':
+        borrow_record.return_date = timezone.now()
+        borrow_record.status = 'RETURNED'
+        borrow_record.save()
+    return redirect('my_borrows')
+
+@login_required
+def my_borrows(request):
+    borrow_records = BorrowRecord.objects.filter(borrower=request.user).order_by('-borrow_date')
+    return render(request, 'my_borrows.html', {'borrow_records': borrow_records})

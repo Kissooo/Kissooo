@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mt-4">My Borrowed Items</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Borrow Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in borrow_records %}
+                <tr>
+                    <td><a href="{% url 'item_detail' record.item.pk %}">{{ record.item.name }}</a></td>
+                    <td>{{ record.item.category.name|default:"N/A" }}</td>
+                    <td>{{ record.borrow_date }}</td>
+                    <td>{{ record.return_date|default:"-" }}</td>
+                    <td>
+                        <span class="badge {% if record.status == 'BORROWED' %}bg-warning{% else %}bg-success{% endif %}">
+                            {{ record.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if record.status == 'BORROWED' %}
+                            <form action="{% url 'return_item' record.pk %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-info">Return</button>
+                            </form>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">You have not borrowed any items.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

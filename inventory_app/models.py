@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -19,3 +20,17 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
+
+class BorrowRecord(models.Model):
+    STATUS_CHOICES = [
+        ('BORROWED', 'Borrowed'),
+        ('RETURNED', 'Returned'),
+    ]
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    borrower = models.ForeignKey(User, on_delete=models.CASCADE)
+    borrow_date = models.DateTimeField(auto_now_add=True)
+    return_date = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='BORROWED')
+
+    def __str__(self):
+        return f'{self.item.name} borrowed by {self.borrower.username}'
