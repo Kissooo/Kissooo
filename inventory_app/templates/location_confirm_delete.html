@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mt-4">Confirm Deletion</h1>
+    <p>Are you sure you want to delete the location "{{ location.name }}"?</p>
+    <p><small class="text-danger">Note: Deleting a location will set the location field of all associated items to null.</small></p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+        <a href="{% url 'location_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

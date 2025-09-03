@@ -20,6 +20,16 @@
                     </select>
                 </div>
                 <div class="col-auto">
+                    <select name="location" class="form-select">
+                        <option value="">All Locations</option>
+                        {% for location in locations %}
+                            <option value="{{ location.id }}" {% if location.id|stringformat:"s" == selected_location_id %}selected{% endif %}>
+                                {{ location.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
                     <button type="submit" class="btn btn-primary">Filter</button>
                 </div>
             </form>
@@ -35,6 +45,7 @@
                 <th>Code</th>
                 <th>Name</th>
                 <th>Category</th>
+                <th>Location</th>
                 <th>Quantity</th>
                 <th>Actions</th>
             </tr>
@@ -50,6 +61,7 @@
                         {% endif %}
                     </td>
                     <td>{{ item.category.name|default:"N/A" }}</td>
+                    <td>{{ item.location.name|default:"N/A" }}</td>
                     <td>{{ item.quantity }}</td>
                     <td>
                         <a href="{% url 'item_update' item.pk %}" class="btn btn-sm btn-warning">Edit</a>
@@ -64,21 +76,21 @@
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
                 {% if page_obj.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}">&laquo; First</a></li>
-                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}{% if selected_location_id %}&location={{ selected_location_id }}{% endif %}">&laquo; First</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}{% if selected_location_id %}&location={{ selected_location_id }}{% endif %}">Previous</a></li>
                 {% endif %}
 
                 {% for i in page_obj.paginator.page_range %}
                     {% if page_obj.number == i %}
                         <li class="page-item active" aria-current="page"><span class="page-link">{{ i }}</span></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}">{{ i }}</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}{% if selected_location_id %}&location={{ selected_location_id }}{% endif %}">{{ i }}</a></li>
                     {% endif %}
                 {% endfor %}
 
                 {% if page_obj.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}">Next</a></li>
-                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}">Last &raquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}{% if selected_location_id %}&location={{ selected_location_id }}{% endif %}">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}{% if selected_location_id %}&location={{ selected_location_id }}{% endif %}">Last &raquo;</a></li>
                 {% endif %}
             </ul>
         </nav>

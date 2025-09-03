@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mt-4">Storage Locations</h1>
+    <a href="{% url 'location_create' %}" class="btn btn-primary mb-3">Add New Location</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for location in locations %}
+                <tr>
+                    <td>{{ location.name }}</td>
+                    <td>
+                        <a href="{% url 'location_update' location.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'location_delete' location.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center">No locations found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
