@@ -65,7 +65,7 @@ def gameLoop():
                         game_over = True
                         game_close = False
                     if event.key == pygame.K_c:
-                        gameLoop()
+                        return True
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -112,7 +112,11 @@ def gameLoop():
 
         clock.tick(snake_speed)
 
+    return False
+
+if __name__ == "__main__":
+    while gameLoop():
+        pass
+
     pygame.quit()
     quit()
-
-gameLoop()
