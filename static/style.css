@@ -1,0 +1,27 @@
+/* Custom styling for the Hospital website */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    scroll-behavior: smooth;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
+}
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+/* Adjust model viewer container */
+.model-container {
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
